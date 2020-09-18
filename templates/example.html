@@ -32,6 +32,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock title %}</title>
     {% block style %}{% endblock style %}
+    <style>
+        {% block css %}{% endblock %}
+    </style>
 </head>
 <body>
     
@@ -50,7 +53,7 @@
                        <ul class="menu mt-2">
                         <li class= "{% block active %}{% endblock active %}"><a href="/">Home</a></li>
                         <li><a href="/products">Shop Now</a></li>
-                        <li><a href="/about">About</a></li>
+                        <li><a href="/tracker">About</a></li>
                         <li><a href="/contact">Contact</a></li>
                         {% if user.is_authenticated %}
                         <li>
@@ -226,7 +229,7 @@
             </div>
         </div>
     </footer>
-    
+    {% block scripts %}{% endblock scripts %}
 </body>
 </html>
 

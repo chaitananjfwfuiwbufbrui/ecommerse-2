@@ -20,23 +20,58 @@ def search(request):
 def singleproduct(request,slug):
     
     single = products.objects.filter(slug=slug).first()
+     
     
-
+    prod = products.objects.filter(sub_category=single.sub_category)
+    subheading = products.objects.filter(category=single.category)
     
+    removelis = [single.product_name]
+    new_list = []
+    newcat = []
+    #filtering single product from our sub catagiory set
+    for i in prod:
+        if not i.product_name in removelis:
+            new_list.append(i)
+    #filtering single product from our sub catagiory set            
+    for s in subheading:
+        if not s.product_name in removelis:
+            newcat.append(s)
+    #filtering sub catagiory  product from our catagiory set
+    for q in new_list:
+        if q in newcat:
+            newcat.remove(q)
     
-    context = {'single' : single}
+    context = {'single' : single,"prod":new_list,"catagory":newcat}
     return render(request,'singleproduct.html',context)
 def tracker(request):
-    dataa = products.objects.all()
-    n = len(dataa)
-    nslides = n // 4 + ceil((n/4)-(n/4))
-    context  = {'noofslides':nslides,'range':range(1,nslides),'dataa' : dataa}
+    product = products.objects.all()
+    print(product)
+    n = len(product)
+    nSlides = n//4 + ceil((n/4)-(n//4))
+    params = {'no_of_slides':nSlides, 'range': range(1,nSlides),'product': product}
+    return render(request, 'tracker.html', params)
+
     
         
 
     return render(request,'tracker.html',context)
 def user(request):
-    return render(request,'user.html')
+    product= products.objects.all()
+    allProds=[]
+    catprods= products.objects.values('sub_category', 'id')
+    cats= {item["sub_category"] for item in catprods}
+    for cat in cats:
+        prod=products.objects.filter(sub_category=cat)
+        n = len(prod)
+        nSlides = n // 4 + ceil((n / 4) - (n // 4))
+        allProds.append([prod, range(1, nSlides), nSlides])
+
+    params={'allProds':allProds }
+    return render(request,"tracker.html", params)
+
+    
+
+    
 def contact(request):
     return render(request,'contact.html')
 
