@@ -17,9 +17,18 @@ class products(models.Model):
 
 
     def __str__(self):
-        return self.product_name +" catagiory:   " +self.category
+        return self.product_name +"         catagiory:   " +self.category + "subcatagiry :   "+ self.sub_category
 
 def slug_generator(sender,instance,*args,**kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
 pre_save.connect(slug_generator,sender=products)
+
+class contact(models.Model):
+            message = models.AutoField(primary_key=True)
+            name = models.CharField(max_length=30,default="")
+            email = models.CharField(max_length=30,default="")
+            phn = models.CharField(max_length=20,default="")
+            desc = models.CharField(max_length=200,default="")
+            def __str__(self):
+                return self.name

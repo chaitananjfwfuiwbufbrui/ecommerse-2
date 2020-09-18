@@ -14,7 +14,7 @@ urlpatterns = [
      path('logout', views.logouts, name='logout'),
      path('signin', views.signin, name='signin'),
      path('user/', views.user, name='user'),
-     path('contact/', views.contact, name='contact'),
+     path('contact', views.Contact, name='contact'),
      path('single/<str:slug>',views.singleproduct,name ='singleproduct')
 
 ]

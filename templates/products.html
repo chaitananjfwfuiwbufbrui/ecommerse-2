@@ -168,56 +168,22 @@
                 <!-- deals -->
                 <div class="deal-leftmk left-side">
                     <h3 class="sear-head">Special Deals</h3>
+                    {% for la in latest  %}
+                        
                     <div class="special-sec1 row mb-3">
                         <div class="img-deals col-md-4">
-                            <img src="images/s4.jpg" class="img-fluid" alt="">
+                        <a href="/single/{{la.slug}}">
+                            <img src="{{la.product_image.url}}" class="img-fluid" alt="">
+                        </a>
                         </div>
                         <div class="img-deal1 col-md-4">
-                            <h3>Shuberry Heels</h3>
-                            <a href="shop-single.html">$180.00</a>
+                            <h3>{{la.product_name}}</h3>
+                            <a href="/single/{{la.slug}}">{{la.prize}}</a>
                         </div>
 
                     </div>
-                    <div class="special-sec1 row">
-                        <div class="img-deals col-md-4">
-                            <img src="images/s2.jpg" class="img-fluid" alt="">
-                        </div>
-                        <div class="img-deal1 col-md-8">
-                            <h3>Chikku Loafers</h3>
-                            <a href="shop-single.html">$99.00</a>
-                        </div>
-
-                    </div>
-                    <div class="special-sec1 row my-3">
-                        <div class="img-deals col-md-4">
-                            <img src="images/s1.jpg" class="img-fluid" alt="">
-                        </div>
-                        <div class="img-deal1 col-md-8">
-                            <h3>Bella Toes</h3>
-                            <a href="shop-single.html">$165.00</a>
-                        </div>
-
-                    </div>
-                    <div class="special-sec1 row">
-                        <div class="img-deals col-md-4">
-                            <img src="images/s5.jpg" class="img-fluid" alt="">
-                        </div>
-                        <div class="img-deal1 col-md-8">
-                            <h3>Red Bellies</h3>
-                            <a href="shop-single.html">$225.00</a>
-                        </div>
-
-                    </div>
-                    <div class="special-sec1 row mt-3">
-                        <div class="img-deals col-md-4">
-                            <img src="images/s3.jpg" class="img-fluid" alt="">
-                        </div>
-                        <div class="img-deal1 col-md-8">
-                            <h3>(SRV) Sneakers</h3>
-                            <a href="shop-single.html">$169.00</a>
-                        </div>
-
-                    </div>
+                    {% endfor %}
+                    
                 </div>
                 <!-- //deals -->
 
@@ -250,13 +216,19 @@
                                         <span class="money"> &#8377;{{products.prize}} </span>
                                     </div>
                                 </div>
-                                <ul class="stars">
-                                    <li><a href="#"><span class="fa fa-star" aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star" aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-half-o" aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-half-o" aria-hidden="true"></span></a></li>
-                                    <li><a href="#"><span class="fa fa-star-o" aria-hidden="true"></span></a></li>
-                                </ul>
+
+
+
+    <button type="submit" style="margin-top:1em ;" id="pr{{products.slug}}"
+    class="btn btn-info cart">
+    
+    <span style="color: rgb(255, 255, 255); "><i class="fa fa-shopping-cart"
+        aria-hidden="true"></i>
+    </span>
+    
+    <span class="glyphicon glyphicon-shopping-cart"></span>
+    add to cart</button>
+
                             </div>
                         </div>
                     </div>
@@ -276,7 +248,34 @@
 <!-- //contact -->
 <!-- footer -->
 
-{% block scripts %}{% endblock scripts %}
 
 
+{% block js %}
+<script>
+    console.log('working');
+    if(localStorage.getItem('cart') == null){
+    var cart = {};
+    }
+    else
+    {
+    cart = JSON.parse(localStorage.getItem('cart'));
+    document.getElementById('cart').innerHTML = Object.keys(cart).length;
+    }
+    $('.cart').click(function(){
+    console.log('clicked');
+    var idstr = this.id.toString();
+    console.log(idstr);
+    if (cart[idstr] !=undefined){
+    cart[idstr] = cart[idstr] + 1;
+    }
+    else
+    {
+    cart[idstr] = 1;
+    }
+    console.log(cart);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    document.getElementById('cart').innerHTML = Object.keys(cart).length;
+    });
+    </script>
+{% endblock %}
 {% endblock body %}

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from math import ceil
 # Create your views here.
 from django.shortcuts import render,HttpResponse,redirect
-from home.models import products
+from home.models import products,contact
 from  django.contrib.auth.models import User 
 from django.contrib.auth import logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,7 +10,15 @@ from django.contrib.auth import login as auth_login
 from  django.contrib import messages
 # Create your views here.
 def home(request): 
-    return render(request,'home.html')
+    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
+    
+    dataa = products.objects.all()
+          
+    context = {'dataa' : dataa,"latest":latest}
+        
+    
+
+    return render(request,'home.html',context)
 def cart(request):
     return render(request,'cart.html')
 def search(request):
@@ -56,6 +64,8 @@ def tracker(request):
 
     return render(request,'tracker.html',context)
 def user(request):
+
+    
     product= products.objects.all()
     allProds=[]
     catprods= products.objects.values('sub_category', 'id')
@@ -72,13 +82,29 @@ def user(request):
     
 
     
-def contact(request):
+def Contact(request):
+    if request.method =="POST":
+            name = request.POST['Name']
+            email = request.POST['Email']
+            phn = request.POST['Phoneno']
+            desc = request.POST['Message']
+               
+              
+            ins = contact(name=name,desc=desc,phn=phn,email=email)
+            ins.save()
+            messages.success(request,"your details has been recorded")
+
+
+
+    
     return render(request,'contact.html')
 
 def productss(request):
+    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
+    
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa}
+    context = {'dataa' : dataa,"latest":latest}
         
     return render(request,'products.html',context)
 
