@@ -3,6 +3,7 @@ from django.http import JsonResponse
 # Create your views here.
 from django.shortcuts import render
 from math import ceil
+import json
 # Create your views here.
 from django.shortcuts import render,HttpResponse,redirect
 from home.models import *
@@ -30,14 +31,38 @@ def cart(request):
 
 
     return render(request,'cart.html',context)
-def updatecart(request):
-    return JsonResponse("your cart is added")
 
+
+def updatecart(request):
+    data = json.loads(request.body)
+    productid = data['productsid']
+    action = data['action']
+    print('action:' ,action)
+    print('product:',productid)
+    """customer = request.user.customer
+        product = products.objects.get(id=productid)
+        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+        Orderitems ,created = Order.objects.get_or_create(order=order,complete=False)
+
+        if action == 'add':
+            Orderitems.quantity = (Orderitems+1)
+
+        elif action == "remove":
+            Orderitems.quantity = (Orderitems-1)
+        Orderitems.save()
+        if Orderitems <= 0 :
+            Orderitems.delete()"""
+    
+
+    return JsonResponse("your cart is added",safe=False)
 def checkout(request):
     customer = request.user.customer
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
     context = {'items':items,'order':order}
+    
+
+
 
     return render(request,'checkout.html',context)
 def search(request):

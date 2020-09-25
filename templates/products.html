@@ -219,8 +219,8 @@
 
 
 
-                                <button type="submit" style="margin-top:1em ;" id="{{products.id}}"
-                                    class="btn btn-info cart update-cart">
+                                <button type="submit" data-products="{{products.id}}" data-action="add"
+                                    style="margin-top:1em ;" id="{{products.id}}" class="btn btn-info cart update-cart">
 
                                     <span style="color: rgb(255, 255, 255); "><i class="fa fa-shopping-cart"
                                             aria-hidden="true"></i>
@@ -251,6 +251,6 @@
 
 
 {% block js %}
-<script src="{% static 'css/cart.js' %}"></script>
+<script type="text/javascript" src="{% static 'css/cart.js' %}"></script>
 {% endblock %}
 {% endblock body %}
