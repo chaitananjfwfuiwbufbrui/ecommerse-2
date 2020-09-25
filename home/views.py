@@ -1,8 +1,11 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+# Create your views here.
+from django.shortcuts import render
 from math import ceil
 # Create your views here.
 from django.shortcuts import render,HttpResponse,redirect
-from home.models import products,contact
+from home.models import *
 from  django.contrib.auth.models import User 
 from django.contrib.auth import logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,7 +13,7 @@ from django.contrib.auth import login as auth_login
 from  django.contrib import messages
 # Create your views here.
 def home(request): 
-    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
+    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-25"])
     
     dataa = products.objects.all()
           
@@ -20,7 +23,23 @@ def home(request):
 
     return render(request,'home.html',context)
 def cart(request):
-    return render(request,'cart.html')
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    context = {'items':items,'order':order}
+
+
+    return render(request,'cart.html',context)
+def updatecart(request):
+    return JsonResponse("your cart is added")
+
+def checkout(request):
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    context = {'items':items,'order':order}
+
+    return render(request,'checkout.html',context)
 def search(request):
     return render(request,'search.html')
 
@@ -166,3 +185,6 @@ def signin(request):
        
     else:
         return render(request,'signinpage.html')  
+
+
+

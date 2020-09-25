@@ -12,6 +12,7 @@ urlpatterns = [
      path('tracker/', views.tracker, name='tracker'),
      path('login', views.login, name='login'),
      path('logout', views.logouts, name='logout'),
+     path('checkout/', views.checkout, name='checkout'),
      path('signin', views.signin, name='signin'),
      path('user/', views.user, name='user'),
      path('contact', views.Contact, name='contact'),
