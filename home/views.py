@@ -14,16 +14,11 @@ from django.contrib.auth import login as auth_login
 from  django.contrib import messages
 # Create your views here.
 def home(request): 
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-
-    items = order.orderitems_set.all()
-    cattitems = order.get_cart_item
     latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-25"])
     
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa,"latest":latest,'cattitems':cattitems}
+    context = {'dataa' : dataa,"latest":latest}
         
     
 
@@ -31,10 +26,8 @@ def home(request):
 def cart(request):
     customer = request.user.customer
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-
     items = order.orderitems_set.all()
-    cattitems = order.get_cart_item
-    context = {'items':items,'order':order,'cattitems':cattitems}
+    context = {'items':items,'order':order}
 
 
     return render(request,'cart.html',context)
@@ -44,20 +37,21 @@ def updatecart(request):
     data = json.loads(request.body)
     productid = data['productsid']
     action = data['action']
- 
-    customer = request.user.customer
-    product = products.objects.get(id=productid)
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-    orderitems ,created = Orderitems.objects.get_or_create(order=order,product=product)
-    print(product,'order:',orderitems)
-    if action == 'add':
-        orderitems.quantity = (orderitems.quantity+1)
+    print('action:' ,action)
+    print('product:',productid)
+    """customer = request.user.customer
+        product = products.objects.get(id=productid)
+        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+        Orderitems ,created = Order.objects.get_or_create(order=order,complete=False)
 
-    elif action == "remove":
-        orderitems.quantity = (orderitems.quantity-1)
-    orderitems.save()
-    if orderitems.quantity <= 0 :
-            orderitems.delete()
+        if action == 'add':
+            Orderitems.quantity = (Orderitems+1)
+
+        elif action == "remove":
+            Orderitems.quantity = (Orderitems-1)
+        Orderitems.save()
+        if Orderitems <= 0 :
+            Orderitems.delete()"""
     
 
     return JsonResponse("your cart is added",safe=False)
@@ -76,11 +70,6 @@ def search(request):
 
 
 def singleproduct(request,slug):
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-
-    items = order.orderitems_set.all()
-    cattitems = order.get_cart_item
     
     single = products.objects.filter(slug=slug).first()
      
@@ -104,7 +93,7 @@ def singleproduct(request,slug):
         if q in newcat:
             newcat.remove(q)
     
-    context = {'single' : single,"prod":new_list,'cattitems':cattitems,"catagory":newcat}
+    context = {'single' : single,"prod":new_list,"catagory":newcat}
     return render(request,'singleproduct.html',context)
 def tracker(request):
     product = products.objects.all()
@@ -155,16 +144,11 @@ def Contact(request):
     return render(request,'contact.html')
 
 def productss(request):
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-
-    items = order.orderitems_set.all()
-    cattitems = order.get_cart_item
     latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
     
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa,'cattitems':cattitems,"latest":latest}
+    context = {'dataa' : dataa,"latest":latest}
         
     return render(request,'products.html',context)
 
