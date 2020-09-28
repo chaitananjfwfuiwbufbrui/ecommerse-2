@@ -14,11 +14,16 @@ from django.contrib.auth import login as auth_login
 from  django.contrib import messages
 # Create your views here.
 def home(request): 
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    cartitems = order.get_cart_item
+
     latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-25"])
     
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa,"latest":latest}
+    context = {'dataa' : dataa,"latest":latest,'cartitems':cartitems}
         
     
 
@@ -27,7 +32,14 @@ def cart(request):
     customer = request.user.customer
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
-    context = {'items':items,'order':order}
+    cartitems = order.get_cart_item
+
+
+
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    context = {'items':items,'order':order,'cartitems':cartitems}
 
 
     return render(request,'cart.html',context)
@@ -37,13 +49,12 @@ def updatecart(request):
     data = json.loads(request.body)
     productid = data['productsid']
     action = data['action']
-    print('action:' ,action)
-    print('product:',productid)
+    
     customer = request.user.customer
     product = products.objects.get(id=productid)
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     orderitems ,created = Orderitems.objects.get_or_create(order=order,product=product)
-    print(orderitems.quantity)
+    cartitems = order.get_cart_item
     if action == 'add':
         
         orderitems.quantity = (orderitems.quantity + 1)
@@ -51,7 +62,7 @@ def updatecart(request):
     elif action == "remove":
             orderitems.quantity = (orderitems.quantity-1)
     orderitems.save()
-    if orderitems.quantity<= 0 :
+    if orderitems.quantity <= 0 :
             orderitems.delete()
     
 
@@ -71,6 +82,10 @@ def search(request):
 
 
 def singleproduct(request,slug):
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    cartitems = order.get_cart_item
     
     single = products.objects.filter(slug=slug).first()
      
@@ -94,7 +109,7 @@ def singleproduct(request,slug):
         if q in newcat:
             newcat.remove(q)
     
-    context = {'single' : single,"prod":new_list,"catagory":newcat}
+    context = {'single' : single,"prod":new_list,"catagory":newcat,'cartitems':cartitems}
     return render(request,'singleproduct.html',context)
 def tracker(request):
     product = products.objects.all()
