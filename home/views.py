@@ -39,19 +39,20 @@ def updatecart(request):
     action = data['action']
     print('action:' ,action)
     print('product:',productid)
-    """customer = request.user.customer
-        product = products.objects.get(id=productid)
-        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-        Orderitems ,created = Order.objects.get_or_create(order=order,complete=False)
+    customer = request.user.customer
+    product = products.objects.get(id=productid)
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    orderitems ,created = Orderitems.objects.get_or_create(order=order,product=product)
+    print(orderitems.quantity)
+    if action == 'add':
+        
+        orderitems.quantity = (orderitems.quantity + 1)
 
-        if action == 'add':
-            Orderitems.quantity = (Orderitems+1)
-
-        elif action == "remove":
-            Orderitems.quantity = (Orderitems-1)
-        Orderitems.save()
-        if Orderitems <= 0 :
-            Orderitems.delete()"""
+    elif action == "remove":
+            orderitems.quantity = (orderitems.quantity-1)
+    orderitems.save()
+    if orderitems.quantity<= 0 :
+            orderitems.delete()
     
 
     return JsonResponse("your cart is added",safe=False)
