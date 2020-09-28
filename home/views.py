@@ -71,7 +71,8 @@ def checkout(request):
     customer = request.user.customer
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
-    context = {'items':items,'order':order}
+    cartitems = order.get_cart_item
+    context = {'items':items,'order':order,'cartitems':cartitems}
     
 
 
@@ -160,11 +161,17 @@ def Contact(request):
     return render(request,'contact.html')
 
 def productss(request):
+    customer = request.user.customer
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+    items = order.orderitems_set.all()
+    cartitems = order.get_cart_item
+
+
     latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
     
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa,"latest":latest}
+    context = {'dataa' : dataa,"latest":latest,'cartitems':cartitems}
         
     return render(request,'products.html',context)
 

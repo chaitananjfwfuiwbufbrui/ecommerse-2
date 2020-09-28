@@ -252,5 +252,13 @@
 
 {% block js %}
 <script type="text/javascript" src="{% static 'css/cart.js' %}"></script>
+<script type="text/javascript"> 
+    var cartno = {{cartitems}}
+    console.log(cartno)
+    if (cartno == 0){
+        document.getElementById('cartno').classList.add("hidden")
+    }
+    </script>
+
 {% endblock %}
 {% endblock body %}

@@ -95,7 +95,7 @@
                             <input type="checkbox" id="drop-2" />
                             <ul>
                                 <li><a href="/cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i>your cart
-                                        (<span id="cart"> {{cartitems}} </span>)
+                                        <span id="cartno"  > ({{cartitems}}) </span>
                                     </a></li>
                                 <li><a href="/user">user</a></li>
                                 <li><a href="/logout">logout</a></li>
@@ -268,6 +268,14 @@
     {% block scripts %}{% endblock scripts %}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js">
     </script>
+    <script type="text/javascript"> 
+        var cartno = {{cartitems}}
+        console.log(cartno)
+        if (cartno == 0){
+            document.getElementById('cartno').classList.add("hidden")
+        }
+        </script>
+   
     {% block js %}{% endblock %}
 </body>
 

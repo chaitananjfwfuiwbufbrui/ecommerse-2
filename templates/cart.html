@@ -1,5 +1,5 @@
 {% extends 'example.html' %}
-{% block title %}sign-in page{% endblock title %}
+{% block title %}your cart{% endblock title %}
 {% load static %}
 
 
@@ -29,7 +29,7 @@
     <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
     {% endblock style %}
 {% block body %}
-<div class="container">
+<div class="container" id="container" >
   <div class="row">
       <div class="col-sm-12 col-md-10 col-md-offset-1">
           <table class="table table-hover">
@@ -115,7 +115,15 @@
       </div>
   </div>
 </div>
-
+<div class="card" id="empty">
+ 
+    <div class="card-body cart">
+        <div class="col-sm-12 empty-cart-cls text-center"> <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
+            <h3><strong>Your Cart is Empty</strong></h3>
+            <h4>Add something to make me happy :)</h4> <a href="/products" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+        </div>
+    </div>
+</div>
 
 {% endblock body %}
     
@@ -125,6 +133,20 @@
     
 {% block js %}
 <script type="text/javascript" src="{% static 'css/cart.js' %}"></script>
+<script type="text/javascript"> 
+    var cartno = {{cartitems}}
+    console.log(cartno)
+    if (cartno == 0){
+        document.getElementById('container').classList.add("hidden");
+        document.getElementById('empty').classList.remove("hidden");
+
+    }
+    else {
+        document.getElementById('container').classList.remove("hidden");
+        document.getElementById('empty').classList.add("hidden");
+    }
+
+    </script>
 {% endblock %}
   <!--Section: Block Content-->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
