@@ -61,6 +61,10 @@ def updatecart(request):
 
     elif action == "remove":
             orderitems.quantity = (orderitems.quantity-1)
+    elif action == 'delete':
+        orderitems.quantity = 0
+
+
     orderitems.save()
     if orderitems.quantity <= 0 :
             orderitems.delete()
