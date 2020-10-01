@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from math import ceil
 import json
+import  datetime
 # Create your views here.
 from django.shortcuts import render,HttpResponse,redirect
 from home.models import *
@@ -71,6 +72,42 @@ def updatecart(request):
     
 
     return JsonResponse("your cart is added",safe=False)
+
+
+
+def processorder(request):
+    print('data:',request.body)
+    customer = request.user.customer
+    transection_id = datetime.datetime.now().timestamp
+    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+
+    data = json.loads(request.body)
+    total = float(data['form']['total'])
+    order.transaction_id = transection_id
+    if total == order.get_cart_total:
+        order.complete = True
+    order.save()
+
+    if order.complete == True:
+        ShippingOrder.objects.create(
+            customer = customer,
+            order = order,
+            
+            address =data['shipping']['address'],
+            city = data['shipping']['country'],
+
+            zipcode = data['shipping']['zip'],
+            
+            state =  data['shipping']['state'],
+        )
+        print(state)
+    return JsonResponse("payment has been done....",safe=False)
+
+
+
+
+
+
 def checkout(request):
     customer = request.user.customer
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
@@ -78,7 +115,6 @@ def checkout(request):
     cartitems = order.get_cart_item
     context = {'items':items,'order':order,'cartitems':cartitems}
     
-
 
 
     return render(request,'checkout.html',context)
