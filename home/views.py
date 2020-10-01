@@ -175,7 +175,7 @@ def productss(request):
     
     dataa = products.objects.all()
           
-    context = {'dataa' : dataa,"latest":latest,'cartitems':cartitems}
+    context = {'dataa' : dataa,'items':items,"latest":latest,'cartitems':cartitems}
         
     return render(request,'products.html',context)
 
