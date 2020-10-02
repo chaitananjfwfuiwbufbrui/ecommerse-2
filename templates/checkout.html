@@ -263,8 +263,8 @@
       <!--<button class="btn btn-primary btn-lg btn-block" id="make-payment" type="submit">Continue to checkout</button>-->
     </div>
 
-
-
+    
+    
   </div>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -273,13 +273,14 @@
   </script>
   <script src="https://www.paypal.com/sdk/js?client-id=ARyCltS9Vsp7zXKiLFd66PokHMz2XtqqruAnIxyfdcJho64qv20FxNkRJRhpJxs35LG0_X6h5fdnsbOo" data-namespace="paypal_sdk"></script>
   <script>
+    var Total = '{{order.get_cart_total}}'
     paypal_sdk.Buttons({
       createOrder: function (data, actions) {
         // This function sets up the details of the transaction, including the amount and line item details.
         return actions.order.create({
           purchase_units: [{
             amount: {
-              value: '0.01'
+              value: parseFloat(Total).toFixed(2)
             }
           }]
         });
@@ -288,7 +289,7 @@
         // This function captures the funds from the transaction.
         return actions.order.capture().then(function (details) {
           // This function shows a transaction success message to your buyer.
-          alert('Transaction completed by ' + details.payer.name.given_name);
+          submitformdata()
         });
       }
     }).render('#paypal-button-container');
@@ -299,7 +300,6 @@
     console.log('attach')
 
     var shipping = '{{order.complete}}'
-    var Total = '{{order.get_cart_total}}'
     var form = document.getElementById('formmms')
 
 
