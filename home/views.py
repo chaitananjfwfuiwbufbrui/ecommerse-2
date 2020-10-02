@@ -15,17 +15,24 @@ from django.contrib.auth import login as auth_login
 from  django.contrib import messages
 # Create your views here.
 def home(request): 
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-    items = order.orderitems_set.all()
-    cartitems = order.get_cart_item
-
-    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-25"])
-    
-    dataa = products.objects.all()
-          
-    context = {'dataa' : dataa,"latest":latest,'cartitems':cartitems}
+   
+    if request.user.is_authenticated:
         
+        customer = request.user.customer
+        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+        items = order.orderitems_set.all()
+        cartitems = order.get_cart_item
+
+        latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-10-01"])
+            
+        dataa = products.objects.all()
+                
+        context = {'dataa' : dataa,"latest":latest,'cartitems':cartitems}
+    else:
+        latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-25"])
+        
+        dataa = products.objects.all()
+        context = {'dataa' : dataa,"latest":latest}
     
 
     return render(request,'home.html',context)
@@ -84,6 +91,7 @@ def processorder(request):
     data = json.loads(request.body)
     total = float(data['form']['total'])
     order.transaction_id = transection_id
+    print(transection_id)
     if total == order.get_cart_total:
         order.complete = True
     order.save()
@@ -100,7 +108,7 @@ def processorder(request):
             
             state =  data['shipping']['state'],
         )
-        print(state)
+         
     return JsonResponse("payment has been done....",safe=False)
 
 
@@ -227,6 +235,7 @@ def login(request):
        if user is not None:
             auth_login(request,user)
             messages.success(request,"sucessfully login")
+            
             return redirect('home')
        else:
            messages.error(request,'invalid username')
