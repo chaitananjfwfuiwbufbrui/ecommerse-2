@@ -13,17 +13,27 @@ from django.contrib.auth import logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from  django.contrib import messages
+
+
+from datetime import datetime ,timedelta,date
+
+
 # Create your views here.
 def home(request): 
    
     if request.user.is_authenticated:
+        now = datetime.now()
+        last = date.today() - timedelta(days=30)
+        timestamp = datetime.date(now)
         
-        customer = request.user.customer
+
+
+        customer = request.user
         order ,created = Order.objects.get_or_create(customer=customer,complete=False)
         items = order.orderitems_set.all()
         cartitems = order.get_cart_item
 
-        latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-10-01"])
+        latest = products.objects.filter(pub_date__range=[last, timestamp])
             
         dataa = products.objects.all()
                 
@@ -37,14 +47,14 @@ def home(request):
 
     return render(request,'home.html',context)
 def cart(request):
-    customer = request.user.customer
+    customer = request.user
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
     cartitems = order.get_cart_item
 
 
 
-    customer = request.user.customer
+    
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
     context = {'items':items,'order':order,'cartitems':cartitems}
@@ -58,7 +68,7 @@ def updatecart(request):
     productid = data['productsid']
     action = data['action']
     
-    customer = request.user.customer
+    customer = request.user
     product = products.objects.get(id=productid)
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     orderitems ,created = Orderitems.objects.get_or_create(order=order,product=product)
@@ -84,7 +94,7 @@ def updatecart(request):
 
 def processorder(request):
     print('data:',request.body)
-    customer = request.user.customer
+    customer = request.user
     transection_id = datetime.datetime.now().timestamp
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
 
@@ -114,10 +124,11 @@ def processorder(request):
 
 
 
-
+def check(request):
+    return render(request,'check.html')
 
 def checkout(request):
-    customer = request.user.customer
+    customer = request.user
     order ,created = Order.objects.get_or_create(customer=customer,complete=False)
     items = order.orderitems_set.all()
     cartitems = order.get_cart_item
@@ -131,35 +142,68 @@ def search(request):
 
 
 def singleproduct(request,slug):
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-    items = order.orderitems_set.all()
-    cartitems = order.get_cart_item
+    if request.user.is_authenticated:
+        
+        customer = request.user
+        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+        items = order.orderitems_set.all()
+        cartitems = order.get_cart_item
+        
+        single = products.objects.filter(slug=slug).first()
+        
+        
+        prod = products.objects.filter(sub_category=single.sub_category)
+        subheading = products.objects.filter(category=single.category)
+        
+        removelis = [single.product_name]
+        new_list = []
+        newcat = []
+        #filtering single product from our sub catagiory set
+        for i in prod:
+            if not i.product_name in removelis:
+                new_list.append(i)
+        #filtering single product from our sub catagiory set            
+        for s in subheading:
+            if not s.product_name in removelis:
+                newcat.append(s)
+        #filtering sub catagiory  product from our catagiory set
+        for q in new_list:
+            if q in newcat:
+                newcat.remove(q)
+        
+        context = {'single' : single,"prod":new_list,"catagory":newcat,'cartitems':cartitems}
+        return render(request,'singleproduct.html',context)
+
+    else:
     
-    single = products.objects.filter(slug=slug).first()
-     
+        single = products.objects.filter(slug=slug).first()
+        
+        
+        prod = products.objects.filter(sub_category=single.sub_category)
+        subheading = products.objects.filter(category=single.category)
+        
+        removelis = [single.product_name]
+        new_list = []
+        newcat = []
+        #filtering single product from our sub catagiory set
+        for i in prod:
+            if not i.product_name in removelis:
+                new_list.append(i)
+        #filtering single product from our sub catagiory set            
+        for s in subheading:
+            if not s.product_name in removelis:
+                newcat.append(s)
+        #filtering sub catagiory  product from our catagiory set
+        for q in new_list:
+            if q in newcat:
+                newcat.remove(q)
+        
+        context = {'single' : single,"prod":new_list,"catagory":newcat}
+        return render(request,'singleproduct.html',context)
+
+
+
     
-    prod = products.objects.filter(sub_category=single.sub_category)
-    subheading = products.objects.filter(category=single.category)
-    
-    removelis = [single.product_name]
-    new_list = []
-    newcat = []
-    #filtering single product from our sub catagiory set
-    for i in prod:
-        if not i.product_name in removelis:
-            new_list.append(i)
-    #filtering single product from our sub catagiory set            
-    for s in subheading:
-        if not s.product_name in removelis:
-            newcat.append(s)
-    #filtering sub catagiory  product from our catagiory set
-    for q in new_list:
-        if q in newcat:
-            newcat.remove(q)
-    
-    context = {'single' : single,"prod":new_list,"catagory":newcat,'cartitems':cartitems}
-    return render(request,'singleproduct.html',context)
 def tracker(request):
     product = products.objects.all()
     print(product)
@@ -209,19 +253,30 @@ def Contact(request):
     return render(request,'contact.html')
 
 def productss(request):
-    customer = request.user.customer
-    order ,created = Order.objects.get_or_create(customer=customer,complete=False)
-    items = order.orderitems_set.all()
-    cartitems = order.get_cart_item
-
-
-    latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
-    
-    dataa = products.objects.all()
-          
-    context = {'dataa' : dataa,'items':items,"latest":latest,'cartitems':cartitems}
+       
+    if request.user.is_authenticated:
         
-    return render(request,'products.html',context)
+        customer = request.user
+        order ,created = Order.objects.get_or_create(customer=customer,complete=False)
+        items = order.orderitems_set.all()
+        cartitems = order.get_cart_item
+
+
+        latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
+        
+        dataa = products.objects.all()
+            
+        context = {'dataa' : dataa,'items':items,"latest":latest,'cartitems':cartitems}
+        
+        return render(request,'products.html',context)
+    else:
+         latest = products.objects.filter(pub_date__range=["2020-09-17", "2020-09-18"])
+        
+         dataa = products.objects.all()
+            
+         context = {'dataa' : dataa,"latest":latest}
+        
+         return render(request,'products.html',context)
 
 
 
@@ -273,15 +328,16 @@ def signin(request):
 
 
        myuser = User.objects.create_user(user,email,pass1)
-       
        myuser.first_name= signupfname
        myuser.last_name = signupsname
        myuser.save()
        messages.success(request,"your account has been successfully created")
-       return redirect('login')
+       create_cus = Customer.objects.get_or_create(user=user,name=signupfname,email=email)
+       create_cus.save()
+       return redirect('signin')
        
     else:
         return render(request,'signinpage.html')  
 
-
+       
 

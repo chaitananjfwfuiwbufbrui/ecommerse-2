@@ -51,7 +51,7 @@ class contact(models.Model):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer,on_delete=models.SET_NULL,blank=True,null=True)
+    customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
     data_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False,null=True,blank=True)
     transaction_id = models.CharField(max_length=100,null=True)
@@ -85,7 +85,7 @@ class   Orderitems(models.Model):
 
 
 class ShippingOrder(models.Model):
-    customer = models.ForeignKey(Customer,on_delete=models.SET_NULL,blank=True,null=True)
+    customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
     order = models.ForeignKey(Order,on_delete=models.SET_NULL,blank=True,null=True)
     address= models.CharField(max_length=100,null=True)
     city = models.CharField(max_length=100,null=True)
